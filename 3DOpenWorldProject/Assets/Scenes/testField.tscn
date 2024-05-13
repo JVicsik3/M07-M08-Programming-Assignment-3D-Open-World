@@ -1,0 +1,109 @@
+[gd_scene load_steps=16 format=3 uid="uid://d4aw7st07nvl1"]
+
+[ext_resource type="Script" path="res://Assets/Scripts/character_controller.gd" id="1_bfrty"]
+[ext_resource type="Script" path="res://Assets/Scripts/camera_controller.gd" id="2_g5wxj"]
+[ext_resource type="Texture2D" uid="uid://b50o42smb621t" path="res://Assets/Graphics/Grid.png" id="2_n2y5y"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pdl64"]
+margin = 0.0
+size = Vector3(1, 2, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dqy7r"]
+albedo_texture = ExtResource("2_n2y5y")
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_u4517"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_w3gw8"]
+radius = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v7geg"]
+albedo_texture = ExtResource("2_n2y5y")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7dkgd"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_fxewm"]
+material = SubResource("StandardMaterial3D_7dkgd")
+size = Vector2(200, 200)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n2sh3"]
+size = Vector3(200, 1, 200)
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_5ot0u"]
+
+[sub_resource type="Sky" id="Sky_8u1wx"]
+sky_material = SubResource("PhysicalSkyMaterial_5ot0u")
+
+[sub_resource type="Environment" id="Environment_v2ll3"]
+background_mode = 2
+background_color = Color(0.527096, 0.131553, 0.564756, 1)
+sky = SubResource("Sky_8u1wx")
+ambient_light_source = 2
+ambient_light_color = Color(0, 0, 0, 0)
+tonemap_mode = 2
+glow_enabled = true
+glow_normalized = true
+glow_strength = 0.75
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_a6j0l"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.9647, 58.3099, 0)
+light_energy = 146.055
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.02803, 0)
+script = ExtResource("1_bfrty")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("BoxShape3D_pdl64")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Player"]
+material_override = SubResource("StandardMaterial3D_dqy7r")
+mesh = SubResource("CapsuleMesh_u4517")
+
+[node name="CamRoot" type="Node3D" parent="Player" node_paths=PackedStringArray("player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.523371, 0)
+script = ExtResource("2_g5wxj")
+player = NodePath("..")
+
+[node name="CamYaw" type="Node3D" parent="Player/CamRoot"]
+
+[node name="CamPitch" type="Node3D" parent="Player/CamRoot/CamYaw"]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="Player/CamRoot/CamYaw/CamPitch"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.826541, 0)
+shape = SubResource("SphereShape3D_w3gw8")
+spring_length = 3.0
+
+[node name="Camera3D" type="Camera3D" parent="Player/CamRoot/CamYaw/CamPitch/SpringArm3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.948137, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+material_override = SubResource("StandardMaterial3D_v7geg")
+mesh = SubResource("PlaneMesh_fxewm")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_n2sh3")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_v2ll3")
+camera_attributes = SubResource("CameraAttributesPractical_a6j0l")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 4.677, 0)
+light_energy = 0.7
+shadow_enabled = true
+shadow_opacity = 0.45
+sky_mode = 1
+
+[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(0.965893, -0.0777472, -0.246993, 0.0784572, 0.996893, -0.00698126, 0.246768, -0.0126352, 0.968992, 0, 4.677, 0)
+light_energy = 0.03
+sky_mode = 1
+
+[connection signal="set_cam_rotation" from="Player/CamRoot" to="Player" method="_on_cam_root_set_cam_rotation"]

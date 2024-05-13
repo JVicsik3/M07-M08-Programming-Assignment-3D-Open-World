@@ -1,0 +1,58 @@
+[gd_scene load_steps=9 format=3 uid="uid://d4aw7st07nvl1"]
+
+[ext_resource type="Script" path="res://Assets/Scripts/character_controller.gd" id="1_bfrty"]
+[ext_resource type="Texture2D" uid="uid://bsly5lj1vkbax" path="res://icon.svg" id="2_h7jku"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pdl64"]
+size = Vector3(1, 1.91849, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_u4517"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_55qny"]
+albedo_texture = ExtResource("2_h7jku")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7dkgd"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_fxewm"]
+material = SubResource("StandardMaterial3D_7dkgd")
+size = Vector2(200, 200)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n2sh3"]
+size = Vector3(200, 1, 200)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.9647, 58.3099, 0)
+light_energy = 146.055
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.02803, 0)
+script = ExtResource("1_bfrty")
+
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.661673, 0)
+remote_path = NodePath("../Camera3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("BoxShape3D_pdl64")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
+mesh = SubResource("CapsuleMesh_u4517")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.31951, 0)
+light_energy = 16.0
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.661673, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+material_override = SubResource("StandardMaterial3D_55qny")
+mesh = SubResource("PlaneMesh_fxewm")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_n2sh3")
